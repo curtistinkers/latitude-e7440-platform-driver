@@ -5,5 +5,7 @@ set -e
 if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
     systemctl disable --now brightness-keys-handler.service || true
     systemctl disable --now lid-handler.service || true
+    systemctl disable --now fan-handler.timer || true
+    systemctl disable --now fan-handler.service || true
     rm -rf /run/latitude-e7440-platform-driver
 fi

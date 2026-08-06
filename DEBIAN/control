@@ -4,6 +4,6 @@ Section: utils
 Priority: optional
 Architecture: all
 Maintainer: curtistinkers <curtistinkers.commit@gmail.com>
-Depends: coreutils, grep, awk, systemd
+Depends: coreutils, grep, awk, systemd, lm-sensors
 Description: Native unbuffered laptop backlight button and instant lid switch handlers.
  Provides isolated systemd background daemons without external dependencies.

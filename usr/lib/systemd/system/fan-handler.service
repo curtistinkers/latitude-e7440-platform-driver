@@ -1,0 +1,18 @@
+[Unit]
+Description=Platform Motherboard Fan Speed Regulation Task
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/latitude-e7440-platform-driver/fan-handler.sh
+
+# --- Security Sandboxing ---
+ProtectSystem=strict
+ProtectHome=yes
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+RestrictAddressFamilies=none
+ProtectClock=yes
+ReadWritePaths=/sys/class/hwmon/

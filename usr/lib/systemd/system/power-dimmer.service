@@ -1,0 +1,23 @@
+[Unit]
+Description=Instant Screen Power Dimmer Task
+After=input.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/latitude-e7440-platform-driver/power-dimmer.sh
+
+# --- Security Sandboxing ---
+ProtectSystem=strict
+ProtectHome=yes
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+RestrictAddressFamilies=none
+ProtectClock=yes
+
+# Share the package namespace folder and keep state data alive between tasks
+RuntimeDirectory=latitude-e7440-platform-driver
+RuntimeDirectoryPreserve=yes
+
+ReadWritePaths=/sys/class/backlight/intel_backlight/brightness

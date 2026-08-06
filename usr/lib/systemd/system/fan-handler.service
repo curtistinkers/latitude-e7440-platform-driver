@@ -6,13 +6,27 @@ After=multi-user.target
 Type=oneshot
 ExecStart=/usr/libexec/latitude-e7440-platform-driver/fan-handler.sh
 
-# --- Security Sandboxing ---
+# Lock down the root filesystem, making it entirely read-only
 ProtectSystem=strict
+
+# Protect home directories and system logging configurations
 ProtectHome=yes
 ProtectControlGroups=yes
 ProtectKernelModules=yes
+
+# Explicitly whitelist ONLY the hardware directories the script needs to write to
+ReadWritePaths=/sys/class/hwmon/
+
+# Create a completely isolated, private /tmp directory for this script
 PrivateTmp=yes
+
+# Prevent the script from acquiring new privileges or elevation paths
 NoNewPrivileges=yes
+
+# Deny access to networking tunnels and kernel clock tuning
 RestrictAddressFamilies=none
 ProtectClock=yes
-ReadWritePaths=/sys/class/hwmon/
+
+# Restrict /run directory access
+RuntimeDirectory=latitude-e7440-platform-driver
+RuntimeDirectoryPreserve=yes

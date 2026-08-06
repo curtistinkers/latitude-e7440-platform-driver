@@ -1,0 +1,10 @@
+#!/bin/env sh
+
+set -e
+
+if [ "$1" = "configure" ]; then
+    systemctl daemon-reload
+    systemctl reload systemd-logind || systemctl restart systemd-logind
+    systemctl enable --now brightness-keys-handler.service
+    systemctl enable --now lid-handler.service
+fi

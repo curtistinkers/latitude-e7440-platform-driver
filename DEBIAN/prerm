@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
+    systemctl disable --now brightness-keys-handler.service || true
+    systemctl disable --now lid-handler.service || true
+    rm -rf /run/latitude-e7440-platform-driver
+fi

@@ -1,7 +1,8 @@
 #!/bin/sh
 
+RUN_DIR="/run/latitude-e7440-platform-driver"
 SYS_DIR="/sys/class/backlight/intel_backlight"
-SAVE_FILE="/run/latitude-e7440-platform-driver/lid_brightness_save"
+SAVE_FILE="$RUN_DIR/lid_brightness_save"
 
 # Dynamically locate the stable Lid Switch event file
 DEV=$(ls /sys/devices/platform/PNP0C0D:00/input/input*/ | grep -oE "event[0-9]+")

@@ -1,8 +1,9 @@
-#!/bin/env sh
+#!/bin/sh
 
+RUN_DIR="/run/latitude-e7440-platform-driver"
 SYS_DIR="/sys/class/power_supply"
 BACKLIGHT_DIR="/sys/class/backlight/intel_backlight"
-SAVE_FILE="/run/latitude-e7440-platform-driver/power_brightness_save"
+SAVE_FILE="$RUN_DIR/power_brightness_save"
 
 # 1. Dynamically locate the AC folder vendor path
 AC_PATH=$(find "$SYS_DIR" -maxdepth 1 -name "AC*" -o -name "ADP*" -o -name "ACAD*" | head -n 1)

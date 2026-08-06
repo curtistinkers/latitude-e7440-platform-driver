@@ -1,4 +1,6 @@
-#!/bin/env sh
+#!/bin/sh
+
+RUN_DIR="/run/latitude-e7440-platform-driver"
 
 echo "==> Fan Handler Execution Started <=="
 
@@ -10,7 +12,7 @@ if [ -z "$HWMON_DIR" ]; then
     exit 0
 fi
 
-# 2. Truly Dynamically discover which temp index is labeled "CPU"
+# 2. Truly Dynamically discover which temp index is labelled "CPU"
 CPU_INDEX=""
 for label_file in "$HWMON_DIR"/temp*_label; do
     if [ -f "$label_file" ]; then
@@ -47,22 +49,61 @@ if [ ! -f "$PWM_FILE" ]; then
     exit 0
 fi
 
-# 4. Dynamic Threshold Management Matrix (Direct-Write)
-if [ "$TEMP" -lt 55 ]; then
-    TARGET_PWM=0
-elif [ "$TEMP" -ge 55 ] && [ "$TEMP" -lt 70 ]; then
-    TARGET_PWM=128
-else
-    TARGET_PWM=255
-fi
+# 4. Dynamic Threshold Management Matrix with Hysteresis
+STATE_FILE="$RUN_DIR/fan_state"
+LAST_PWM=0
+[ -f "$STATE_FILE" ] && LAST_PWM=$(cat "$STATE_FILE")
 
-echo "DEBUG: Evaluated Target PWM state: $TARGET_PWM"
+TARGET_PWM=$LAST_PWM
+
+case "$LAST_PWM" in
+    0)
+        # Fan is off. Turn on Low if we cross 55
+        if [ "$TEMP" -ge 55 ]; then
+            TARGET_PWM=128
+        fi
+        ;;
+    128)
+        # Fan is Low. 
+        # Up to High if we cross 70
+        if [ "$TEMP" -ge 70 ]; then
+            TARGET_PWM=255
+        # Down to Off if we drop below 50 (5 degree buffer)
+        elif [ "$TEMP" -lt 50 ]; then
+            TARGET_PWM=0
+        fi
+        ;;
+    255)
+        # Fan is High.
+        # Down to Low if we drop below 65 (5 degree buffer)
+        if [ "$TEMP" -lt 65 ]; then
+            TARGET_PWM=128
+        fi
+        ;;
+    *)
+        # Fallback for unknown state: use original thresholds
+        if [ "$TEMP" -lt 55 ]; then
+            TARGET_PWM=0
+        elif [ "$TEMP" -lt 70 ]; then
+            TARGET_PWM=128
+        else
+            TARGET_PWM=255
+        fi
+        ;;
+esac
+
+echo "DEBUG: Last PWM: $LAST_PWM, Current Temp: $TEMP°C -> Evaluated Target PWM: $TARGET_PWM"
 
 # 5. Write speed state adjustments directly to the cooling controller chip
-if echo "$TARGET_PWM" > "$PWM_FILE" 2>&1; then
-    echo "DEBUG SUCCESS: Wrote $TARGET_PWM directly to $PWM_FILE"
+if [ "$TARGET_PWM" -ne "$LAST_PWM" ] || [ ! -f "$STATE_FILE" ]; then
+    if echo "$TARGET_PWM" > "$PWM_FILE" 2>&1; then
+        echo "DEBUG SUCCESS: Wrote $TARGET_PWM directly to $PWM_FILE"
+        echo "$TARGET_PWM" > "$STATE_FILE"
+    else
+        echo "DEBUG ERROR: Failed to write to $PWM_FILE (Permission or block error)"
+    fi
 else
-    echo "DEBUG ERROR: Failed to write to $PWM_FILE (Permission or block error)"
+    echo "DEBUG: No PWM change required."
 fi
 
 echo "==> Fan Handler Execution Finished <=="

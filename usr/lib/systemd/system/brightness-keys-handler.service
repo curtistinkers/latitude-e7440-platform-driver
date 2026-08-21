@@ -7,26 +7,61 @@ Type=simple
 ExecStart=/usr/libexec/latitude-e7440-platform-driver/brightness-keys-handler.sh
 Restart=always
 
-# Lock down the root filesystem, making it entirely read-only
-ProtectSystem=strict
+# Required for raw input device monitoring
+User=root
+Group=input
 
-# Protect home directories and system logging configurations
+# Grant explicit, minimal hardware access without root
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+# Strict path whitelisting
+ReadWritePaths=/sys/class/backlight/intel_backlight/brightness
+ReadOnlyPaths=/sys/devices/pci0000:00/acpi.video_bus.0/
+ReadOnlyPaths=/dev/input/
+ReadOnlyPaths=/usr/libexec/latitude-e7440-platform-driver/brightness-keys-handler.sh
+
+# System call filtering (Allowing mandatory tools like dd, cat, od)
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+
+# Kernel and network lockdown
+RestrictAddressFamilies=none
+RestrictNamespaces=yes
+RestrictRealtime=yes
+ProtectClock=yes
+ProtectProc=invisible
+ProcSubset=pid
+PrivateNetwork=yes
+IPAddressDeny=any
+ProtectHostname=yes
+MemoryDenyWriteExecute=yes
+LockPersonality=yes
+
+# Filesystem isolation
+ProtectSystem=strict
 ProtectHome=yes
 ProtectControlGroups=yes
 ProtectKernelModules=yes
-
-# Explicitly whitelist ONLY the hardware directories the script needs to write to
-ReadWritePaths=/sys/class/backlight/intel_backlight/brightness
-
-# Create a completely isolated, private /tmp directory for this script
+ProtectKernelTunables=yes
+ProtectKernelLogs=yes
 PrivateTmp=yes
+PrivateUsers=yes
+RestrictSUIDSGID=yes
+UMask=0077
+MountFlags=private
 
-# Prevent the script from acquiring new privileges or elevation paths
+# Keep the host /dev but block everything except the input subsystem character devices
+DevicePolicy=strict
+DeviceAllow=char-input r
+DeviceAllow=/dev/null rw
+DeviceAllow=/dev/zero rw
+DeviceAllow=/dev/stdout rw
+DeviceAllow=/dev/stderr rw
+
+# Prevent privilege escalation
 NoNewPrivileges=yes
-
-# Deny access to networking tunnels and kernel clock tuning
-RestrictAddressFamilies=none
-ProtectClock=yes
 
 [Install]
 WantedBy=multi-user.target

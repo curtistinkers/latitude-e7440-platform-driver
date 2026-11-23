@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eu
 
 RUN_DIR="/run/latitude-e7440-platform-driver"
 SYS_DIR="/sys/class/power_supply"

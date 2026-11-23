@@ -6,6 +6,9 @@ After=input.target
 Type=simple
 ExecStart=/usr/libexec/latitude-e7440-platform-driver/brightness-keys-handler.sh
 Restart=always
+StandardInput=null
+StandardOutput=journal
+StandardError=journal
 
 # Required for raw input device monitoring
 User=root
@@ -56,9 +59,6 @@ MountFlags=private
 DevicePolicy=strict
 DeviceAllow=char-input r
 DeviceAllow=/dev/null rw
-DeviceAllow=/dev/zero rw
-DeviceAllow=/dev/stdout rw
-DeviceAllow=/dev/stderr rw
 
 # Prevent privilege escalation
 NoNewPrivileges=yes

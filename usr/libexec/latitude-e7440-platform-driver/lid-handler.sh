@@ -23,11 +23,11 @@ INITIAL_STATE=$(awk '{print $2}' /proc/acpi/button/lid/*/state)
 echo "Initializing Dynamic Lid Listener. Device: /dev/input/$DEV, Initial state: $INITIAL_STATE"
 
 while true; do
-    # Prefixing with an underscore signals Shellcheck that the variable is intentionally unused
-    # while still allowing dd and od to execute their unbuffered kernel block operations
+    # Wait for an input event; convert its bytes to printable text, then discard them.
+    # The event wakes the loop; the current lid state is read from ACPI below.
     _event=$(dd if="/dev/input/$DEV" bs=24 count=1 2>/dev/null | od -An -v -t x1)
     
-    # Check the physical lid state the millisecond an interrupt occurs
+    # Read the current ACPI lid state after the event wakes the loop.
     LID_STATE=$(awk '{print $2}' /proc/acpi/button/lid/*/state)
     
     case "$LID_STATE" in

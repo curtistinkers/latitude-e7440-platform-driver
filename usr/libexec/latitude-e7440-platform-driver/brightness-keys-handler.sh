@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eu
 
 SYS_DIR="/sys/class/backlight/intel_backlight"
 MAX=$(cat "$SYS_DIR/max_brightness")

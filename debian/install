@@ -1,0 +1,3 @@
+usr/lib/systemd/system/*                        usr/lib/systemd/system/
+usr/lib/systemd/logind.conf.d/*                 usr/lib/systemd/logind.conf.d/
+usr/libexec/latitude-e7440-platform-driver/*    usr/libexec/latitude-e7440-platform-driver/

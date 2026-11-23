@@ -1,0 +1,4 @@
+debian/.debhelper/
+debian/latitude-e7440-platform-driver/
+debian/debhelper-build-stamp
+debian/latitude-e7440-platform-driver.*

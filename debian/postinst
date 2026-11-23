@@ -1,17 +1,7 @@
 #!/bin/sh
-set -e
+set -eu
 
-if [ "$1" = "configure" ]; then
-    # 1. Force systemd to refresh its disk cache BEFORE touching any units
-    systemctl daemon-reload
+# DEBHELPER macro placeholder required for downstream package additions
+#DEBHELPER#
 
-    # 2. Reload logind configuration overrides natively
-    systemctl reload systemd-logind || systemctl restart systemd-logind || true
-
-    # 3. Enable and start your core platform handler services
-    systemctl enable --now brightness-keys-handler.service || true
-    systemctl enable --now lid-handler.service || true
-
-    # 4. Kick off the scheduling cooling clock loop
-    systemctl enable --now fan-handler.timer || true
-fi
+exit 0

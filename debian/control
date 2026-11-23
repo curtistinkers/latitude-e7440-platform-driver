@@ -1,9 +1,15 @@
-Package: latitude-e7440-platform-driver
-Version: 1.x-dev
+Source: latitude-e7440-platform-driver
 Section: utils
 Priority: optional
-Architecture: all
 Maintainer: curtistinkers <curtistinkers.commit@gmail.com>
-Depends: coreutils, grep, awk, systemd, lm-sensors
-Description: Native unbuffered laptop backlight button and instant lid switch handlers.
- Provides isolated systemd background daemons without external dependencies.
+Build-Depends: debhelper-compat (=13)
+Standards-Version: 4.6.2
+
+Package: latitude-e7440-platform-driver
+Architecture: all
+Depends: ${misc:Depends}, systemd, acpid, lm-sensors
+Description: Handles lid switch, brightness, and power removal for Dell Latitude e7440.
+ Provides sandboxed acpid systemd oneshots and scripts to manage turning off
+ the backlight when the lid is closed and turning it on when the lid is
+ opened, adjusting the brightness using the function keys, and dimming the
+ screen when the power cord is unplugged.

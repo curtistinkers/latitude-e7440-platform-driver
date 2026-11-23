@@ -1,18 +1,7 @@
 #!/bin/sh
-set -e
+set -eu
 
-if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
-    # Disable only the files containing real [Install] metadata blocks
-    systemctl disable --now brightness-keys-handler.service || true
-    systemctl disable --now lid-handler.service || true
-    systemctl disable --now fan-handler.timer || true
-    
-    # Stop the oneshot companion service cleanly without touching its install registers
-    systemctl stop fan-handler.service || true
-    
-    # Remove the runtime directory
-    rm -rf /run/latitude-e7440-platform-driver
+# DEBHELPER macro placeholder required for downstream package additions
+#DEBHELPER#
 
-    # Reload systemd to instantly drop the deleted unit mappings from host memory
-    systemctl daemon-reload
-fi
+exit 0

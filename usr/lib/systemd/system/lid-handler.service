@@ -30,6 +30,7 @@ ProtectClock=yes
 
 # Restrict /run directory access
 RuntimeDirectory=latitude-e7440-platform-driver
+RuntimeDirectoryMode=0700
 RuntimeDirectoryPreserve=yes
 
 [Install]

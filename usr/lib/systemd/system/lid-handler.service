@@ -6,27 +6,61 @@ After=input.target
 Type=simple
 ExecStart=/usr/libexec/latitude-e7440-platform-driver/lid-handler.sh
 Restart=always
+StandardInput=null
+StandardOutput=journal
+StandardError=journal
 
-# Lock down the root filesystem, making it entirely read-only
+# Required for raw input device monitoring
+User=root
+Group=input
+
+# Grant explicit, minimal hardware access without root
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+# Strict path whitelisting
+ReadWritePaths=/sys/class/backlight/intel_backlight/brightness
+ReadOnlyPaths=/proc/acpi/button/lid/
+ReadOnlyPaths=/sys/devices/platform/PNP0C0D:00/input/
+ReadOnlyPaths=/usr/libexec/latitude-e7440-platform-driver/lid-handler.sh
+
+# System call filtering (Allowing mandatory tools like dd, cat, od)
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+
+# Kernel and network lockdown
+RestrictAddressFamilies=none
+RestrictNamespaces=yes
+RestrictRealtime=yes
+ProtectClock=yes
+ProtectProc=ptraceable
+PrivateNetwork=yes
+IPAddressDeny=any
+ProtectHostname=yes
+MemoryDenyWriteExecute=yes
+LockPersonality=yes
+
+# Filesystem isolation
 ProtectSystem=strict
-
-# Protect home directories and system logging configurations
 ProtectHome=yes
 ProtectControlGroups=yes
 ProtectKernelModules=yes
-
-# Explicitly whitelist ONLY the hardware directories the script needs to write to
-ReadWritePaths=/sys/class/backlight/intel_backlight/brightness
-
-# Create a completely isolated, private /tmp directory for this script
+ProtectKernelTunables=yes
+ProtectKernelLogs=yes
 PrivateTmp=yes
+PrivateUsers=yes
+RestrictSUIDSGID=yes
+UMask=0077
+MountFlags=private
 
-# Prevent the script from acquiring new privileges or elevation paths
+# Keep the host /dev but block everything except the input subsystem character devices
+DevicePolicy=strict
+DeviceAllow=/dev/null rw
+DeviceAllow=/dev/input/event* r
+
+# Prevent privilege escalation
 NoNewPrivileges=yes
-
-# Deny access to networking tunnels and kernel clock tuning
-RestrictAddressFamilies=none
-ProtectClock=yes
 
 # Restrict /run directory access
 RuntimeDirectory=latitude-e7440-platform-driver

@@ -8,7 +8,7 @@ BACKLIGHT_DIR="/sys/class/backlight/intel_backlight"
 MAX_BRIGHT=$(cat "${BACKLIGHT_DIR}/max_brightness")
 CUR_BRIGHT=$(cat "${BACKLIGHT_DIR}/brightness")
 
-DIM_TARGET=$((MAX_BRIGHT * 30 / 100))
+DIM_TARGET=$((MAX_BRIGHT * 10 / 100))
 
 if [ ! -d "${RUN_DIR}" ]; then
     mkdir --mode=0700 "${RUN_DIR}"
@@ -23,7 +23,7 @@ case "${1}" in
             fi
             echo "${DIM_TARGET}" > "${BACKLIGHT_DIR}/brightness"
         else
-            # If it's already below 30%, do not brighten it, and clear any old state files
+            # If it's already below 10%, do not brighten it, and clear any old state files
             rm -f "${SAVE_FILE}"
         fi
         ;;

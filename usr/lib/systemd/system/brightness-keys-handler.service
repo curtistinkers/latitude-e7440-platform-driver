@@ -1,5 +1,5 @@
 [Unit]
-Description=Intel backlight brightness handler service
+Description=Intel backlight brightness keys handler service
 
 [Service]
 Type=oneshot
@@ -47,13 +47,10 @@ RestrictSUIDSGID=yes
 UMask=0077
 MountFlags=private
 
-# Lockdown devices
+# Use only /dev/null for standard input/output; the script needs no device nodes
 PrivateDevices=yes
 DevicePolicy=strict
 DeviceAllow=/dev/null rw
 
 # Prevent privilege escalation
 NoNewPrivileges=yes
-
-[Install]
-WantedBy=multi-user.target

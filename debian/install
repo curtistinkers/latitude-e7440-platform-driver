@@ -1,3 +1,4 @@
+etc/fancontrol      etc/
 etc/acpi/events/*   etc/acpi/events/
 etc/acpi/handlers/* etc/acpi/handlers/
 

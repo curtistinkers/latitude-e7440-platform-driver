@@ -1,6 +1,23 @@
 #!/bin/sh
 set -eu
 
+detect_sensors() {
+    sensors-detect --auto
+}
+
+main() {
+    case "${1}" in
+        configure)
+            detect_sensors
+            ;;
+        upgrade)
+            ;;
+    esac
+}
+
+# Pass all incoming command line execution arguments into the main controller
+main "$@"
+
 # DEBHELPER macro placeholder required for downstream package additions
 #DEBHELPER#
 

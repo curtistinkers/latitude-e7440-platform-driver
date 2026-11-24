@@ -1,0 +1,2 @@
+event=button/lid
+action=/etc/acpi/handlers/lid-switch.sh %e

@@ -2,8 +2,8 @@
 set -eu
 
 RUN_DIR="/run/latitude-e7440-platform-driver"
-BACKLIGHT_DIR="/sys/class/backlight/intel_backlight"
 SAVE_FILE="${RUN_DIR}/power_brightness_save"
+BACKLIGHT_DIR="/sys/class/backlight/intel_backlight"
 
 MAX_BRIGHT=$(cat "${BACKLIGHT_DIR}/max_brightness")
 CUR_BRIGHT=$(cat "${BACKLIGHT_DIR}/brightness")

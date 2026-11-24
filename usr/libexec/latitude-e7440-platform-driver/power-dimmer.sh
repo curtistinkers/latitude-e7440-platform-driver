@@ -1,5 +1,5 @@
 #!/bin/sh
-# set -eu
+set -eu
 
 RUN_DIR="/run/latitude-e7440-platform-driver"
 BACKLIGHT_DIR="/sys/class/backlight/intel_backlight"
@@ -12,31 +12,33 @@ DIM_TARGET=$((MAX_BRIGHT * 30 / 100))
 
 case "${4}" in
     00000000)
-    # Unplugged (OB): Only touch the screen if it is currently brighter than 30%
-    if [ "${CUR_BRIGHT}" -gt "${DIM_TARGET}" ]; then
-        if [ ! -f "${SAVE_FILE}" ]; then
-            echo "${CUR_BRIGHT}" > "${SAVE_FILE}"
+        # Unplugged (OB): Only touch the screen if it is currently brighter than 30%
+        if [ "${CUR_BRIGHT}" -gt "${DIM_TARGET}" ]; then
+            if [ ! -f "${SAVE_FILE}" ]; then
+                echo "${CUR_BRIGHT}" > "${SAVE_FILE}"
+            fi
+            echo "${DIM_TARGET}" > "${BACKLIGHT_DIR}/brightness"
+        else
+            # If it's already below 30%, do not brighten it, and clear any old state files
+            rm -f "${SAVE_FILE}"
         fi
-        echo "${DIM_TARGET}" > "${BACKLIGHT_DIR}/brightness"
-    else
-        # If it's already below 30%, do not brighten it, and clear any old state files
-        rm -f "${SAVE_FILE}"
-    fi
         ;;
     00000001)
-    # Plugged In (OL): Restore previous state if a save file exists, otherwise go to max
-    if [ -f "${SAVE_FILE}" ]; then
-        RESTORED=$(cat "${SAVE_FILE}")
-        echo "${RESTORED}" > "${BACKLIGHT_DIR}/brightness"
-        rm -f "${SAVE_FILE}"
-    else
-        # Only force max brightness if it was actually sitting exactly at our dim target
-        if [ "${CUR_BRIGHT}" -eq "${DIM_TARGET}" ]; then
-            echo "${MAX_BRIGHT}" > "${BACKLIGHT_DIR}/brightness"
+        # Plugged In (OL): Restore previous state if a save file exists, otherwise go to max
+        if [ -f "${SAVE_FILE}" ]; then
+            RESTORED=$(cat "${SAVE_FILE}")
+            echo "${RESTORED}" > "${BACKLIGHT_DIR}/brightness"
+            rm -f "${SAVE_FILE}"
+        else
+            # Only force max brightness if it was actually sitting exactly at our dim target
+            if [ "${CUR_BRIGHT}" -eq "${DIM_TARGET}" ]; then
+                echo "${MAX_BRIGHT}" > "${BACKLIGHT_DIR}/brightness"
+            fi
         fi
-    fi
         ;;
     *)
         exit 0
         ;;
 esac
+
+exit 0

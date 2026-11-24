@@ -5,12 +5,21 @@ detect_sensors() {
     sensors-detect --auto
 }
 
+reload_logind() {
+    if [ -d /run/systemd/system ]; then
+        systemctl --system daemon-reload >/dev/null || true
+        deb-systemd-invoke try-reload-or-restart systemd-logind.service >/dev/null || true
+    fi
+}
+
 main() {
     case "${1}" in
         configure)
             detect_sensors
+            reload_logind
             ;;
         upgrade)
+            reload_logind
             ;;
     esac
 }

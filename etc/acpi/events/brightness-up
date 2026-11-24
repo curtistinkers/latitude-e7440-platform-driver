@@ -1,2 +1,2 @@
 event=video/brightnessup
-action=/usr/libexec/latitude-e7440-platform-driver/brightness-keys-handler.sh down
+action=/usr/libexec/latitude-e7440-platform-driver/brightness-keys-handler.sh up

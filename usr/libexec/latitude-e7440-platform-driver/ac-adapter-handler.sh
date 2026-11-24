@@ -26,6 +26,11 @@ case "${1}" in
             # If it's already below 10%, do not brighten it, and clear any old state files
             rm -f "${SAVE_FILE}"
         fi
+
+        # Run a custom handler if it exists
+        if [ -f "/usr/local/bin/custom-ac-adapter-handler.sh" ]; then
+            /usr/local/bin/custom-ac-adapter-handler.sh "${1}"
+        fi
         ;;
     mains)
         # Plugged In (OL): Restore previous state if a save file exists, otherwise go to max
@@ -38,6 +43,11 @@ case "${1}" in
             if [ "${CUR_BRIGHT}" -eq "${DIM_TARGET}" ]; then
                 echo "${MAX_BRIGHT}" > "${BACKLIGHT_DIR}/brightness"
             fi
+        fi
+
+        # Run a custom handler if it exists
+        if [ -f "/usr/local/bin/custom-ac-adapter-handler.sh" ]; then
+            /usr/local/bin/custom-ac-adapter-handler.sh "${1}"
         fi
         ;;
     *)

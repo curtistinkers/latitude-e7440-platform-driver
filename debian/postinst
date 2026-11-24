@@ -12,14 +12,20 @@ reload_logind() {
     fi
 }
 
+restart_fancontrol() {
+    deb-systemd-invoke restart fancontrol.service >/dev/null || true
+}
+
 main() {
     case "${1}" in
         configure)
             detect_sensors
             reload_logind
+            restart_fancontrol
             ;;
         upgrade)
             reload_logind
+            restart_fancontrol
             ;;
     esac
 }

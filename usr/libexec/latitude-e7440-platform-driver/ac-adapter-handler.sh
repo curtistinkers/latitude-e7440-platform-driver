@@ -11,7 +11,7 @@ CUR_BRIGHT=$(cat "${BACKLIGHT_DIR}/brightness")
 DIM_TARGET=$((MAX_BRIGHT * 30 / 100))
 
 case "${4}" in
-    00000000)
+    battery)
         # Unplugged (OB): Only touch the screen if it is currently brighter than 30%
         if [ "${CUR_BRIGHT}" -gt "${DIM_TARGET}" ]; then
             if [ ! -f "${SAVE_FILE}" ]; then
@@ -23,7 +23,7 @@ case "${4}" in
             rm -f "${SAVE_FILE}"
         fi
         ;;
-    00000001)
+    mains)
         # Plugged In (OL): Restore previous state if a save file exists, otherwise go to max
         if [ -f "${SAVE_FILE}" ]; then
             RESTORED=$(cat "${SAVE_FILE}")

@@ -1,24 +1,20 @@
 [Unit]
-Description=Instant Screen Power Dimmer Task
-After=input.target
+Description=AC power brightness handler service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/libexec/latitude-e7440-platform-driver/power-dimmer.sh
+ExecStart=/usr/libexec/latitude-e7440-platform-driver/ac-adapter-handler.sh $1
+RemainAfterExit=no
 StandardInput=null
-StandardOutput=null
+StandardOutput=journal
 StandardError=journal
 
-# Required for raw input device monitoring
-User=root
-
-# Grant explicit, minimal hardware access without root
+# Grant minimal capabilities
 CapabilityBoundingSet=
 AmbientCapabilities=
 
 # Strict path whitelisting
 ReadWritePaths=/sys/class/backlight/intel_backlight/brightness
-ReadOnlyPaths=/usr/libexec/latitude-e7440-platform-driver/power-dimmer.sh
 
 # System call filtering (Allowing mandatory tools like dd, cat, od)
 SystemCallArchitectures=native

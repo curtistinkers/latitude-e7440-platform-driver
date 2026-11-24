@@ -1,7 +1,0 @@
-#!/bin/sh
-set -eu
-
-# DEBHELPER macro placeholder required for downstream package additions
-#DEBHELPER#
-
-exit 0

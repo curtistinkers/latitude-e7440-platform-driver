@@ -10,6 +10,10 @@ CUR_BRIGHT=$(cat "${BACKLIGHT_DIR}/brightness")
 
 DIM_TARGET=$((MAX_BRIGHT * 30 / 100))
 
+if [ ! -d "${RUN_DIR}" ]; then
+    mkdir --mode=0700 "${RUN_DIR}"
+fi
+
 case "${1}" in
     battery)
         # Unplugged (OB): Only touch the screen if it is currently brighter than 30%

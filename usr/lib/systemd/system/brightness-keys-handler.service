@@ -1,28 +1,20 @@
 [Unit]
-Description=Native Screen Brightness Keys Handler
-After=input.target
+Description=Intel backlight brightness handler service
 
 [Service]
-Type=simple
-ExecStart=/usr/libexec/latitude-e7440-platform-driver/brightness-keys-handler.sh
-Restart=always
+Type=oneshot
+ExecStart=/usr/libexec/latitude-e7440-platform-driver/brightness-keys-handler.sh %i
+RemainAfterExit=no
 StandardInput=null
 StandardOutput=journal
 StandardError=journal
 
-# Required for raw input device monitoring
-User=root
-Group=input
-
-# Grant explicit, minimal hardware access without root
+# Grant minimal capabilities
 CapabilityBoundingSet=
 AmbientCapabilities=
 
 # Strict path whitelisting
 ReadWritePaths=/sys/class/backlight/intel_backlight/brightness
-ReadOnlyPaths=/sys/devices/pci0000:00/acpi.video_bus.0/
-ReadOnlyPaths=/dev/input/
-ReadOnlyPaths=/usr/libexec/latitude-e7440-platform-driver/brightness-keys-handler.sh
 
 # System call filtering (Allowing mandatory tools like dd, cat, od)
 SystemCallArchitectures=native
@@ -55,9 +47,9 @@ RestrictSUIDSGID=yes
 UMask=0077
 MountFlags=private
 
-# Keep the host /dev but block everything except the input subsystem character devices
+# Lockdown devices
+PrivateDevices=yes
 DevicePolicy=strict
-DeviceAllow=char-input r
 DeviceAllow=/dev/null rw
 
 # Prevent privilege escalation

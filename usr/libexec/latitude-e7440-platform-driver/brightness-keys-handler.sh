@@ -5,39 +5,37 @@ SYS_DIR="/sys/class/backlight/intel_backlight"
 MAX=$(cat "$SYS_DIR/max_brightness")
 STEP=$((MAX / 10))
 
-# Dynamically locate the video bus event file using a safe glob loop
-DEV=""
-for path in /sys/devices/pci0000:00/acpi.video_bus.0/input/input*/event*; do
-    if [ -d "$path" ] || [ -c "$path" ] || [ -e "$path" ]; then
-        DEV=$(basename "$path")
-        break
-    fi
-done
+case "$1" in
+    down)
+        CUR=$(cat "${SYS_DIR}/brightness")
+        NEW=$((CUR - STEP))
+        [ "${NEW}" -lt 0 ] && NEW=0
+        printf "BRIGHTNESSDOWN detected: "
+        if [ "${NEW}" -eq 0 ]; then
+            printf "Screen backlight is off."
+        else
+            printf "Changing brightness from %s to %s." "${CUR}" "${NEW}"
+        fi
+        echo "${NEW}" > "${SYS_DIR}/brightness"
+        printf "\n"
+        ;;
+    up)
+        CUR=$(cat "${SYS_DIR}/brightness")
+        NEW=$((CUR + STEP))
+        [ "${NEW}" -gt "${MAX}" ] && NEW="${MAX}"
+        printf "BRIGHTNESSUP detected: "
+        if [ "${NEW}" -eq "${MAX}" ]; then
+            printf "Screen brightness is as high as possible."
+        else
+            printf "Changing brightness from %s to %s." "${CUR}" "${NEW}"
+        fi
+        echo "${NEW}" > "${SYS_DIR}/brightness"
+        printf "\n"
+        ;;
+    *)
+        exit 1
+        ;;
 
-if [ -z "$DEV" ]; then
-    echo "Error: Video bus input event device not found."
-    exit 1
-fi
+esac
 
-echo "Initializing Brightness Key Listener. Device: /dev/input/$DEV, Max Brightness: $MAX, Step Size: $STEP"
-
-while true; do
-    event=$(dd if="/dev/input/$DEV" bs=24 count=1 2>/dev/null | od -An -v -t x1)
-    
-    case "$event" in
-        *"01 00 e0 00"*)
-            CUR=$(cat "$SYS_DIR/brightness")
-            NEW=$((CUR - STEP))
-            [ $NEW -lt 0 ] && NEW=0
-            echo "Key event: BRIGHTNESS_DOWN detected. Changing brightness from $CUR to $NEW"
-            echo $NEW > "$SYS_DIR/brightness"
-            ;;
-        *"01 00 e1 00"*)
-            CUR=$(cat "$SYS_DIR/brightness")
-            NEW=$((CUR + STEP))
-            [ $NEW -gt "$MAX" ] && NEW=$MAX
-            echo "Key event: BRIGHTNESS_UP detected. Changing brightness from $CUR to $NEW"
-            echo "$NEW" > "$SYS_DIR/brightness"
-            ;;
-    esac
-done
+exit 0

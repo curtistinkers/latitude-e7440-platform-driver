@@ -1,0 +1,3 @@
+shell=bash
+external-sources=true
+enable=useless-use-of-cat,require-variable-braces,require-double-brackets,quote-safe-variables,deprecate-which

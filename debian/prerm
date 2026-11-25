@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 set -eu
 
 remove_battery_config() {
-    if [ -f /etc/nut/ups.conf ]; then
+    if [[ -f /etc/nut/ups.conf ]]; then
         # This strips the [battery] block and its 3 indented trailing lines
         sed -i '/\[battery\]/,+3d' /etc/nut/ups.conf
     fi

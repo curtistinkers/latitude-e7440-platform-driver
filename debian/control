@@ -8,8 +8,9 @@ Standards-Version: 4.6.2
 Package: latitude-e7440-platform-driver
 Architecture: all
 Depends: ${misc:Depends}, systemd, acpid, lm-sensors, fancontrol, nut-server, nut-client
-Replaces: linux-battery-nut-bridge
 Conflicts: linux-battery-nut-bridge
+Replaces: linux-battery-nut-bridge
+Provides: linux-battery-nut-bridge
 Description: Handles lid switch, brightness, and power removal for Dell Latitude e7440.
  Provides sandboxed acpid systemd oneshots and scripts to manage turning off
  the backlight when the lid is closed and turning it on when the lid is

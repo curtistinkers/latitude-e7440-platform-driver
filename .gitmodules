@@ -1,0 +1,3 @@
+[submodule "external/nut-bridge"]
+	path = external/nut-bridge
+	url = https://github.com/curtistinkers/linux-laptop-nut-bridge.git

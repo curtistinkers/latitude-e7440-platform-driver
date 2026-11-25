@@ -8,6 +8,12 @@ its own lid, power, sleep, suspend, or hibernate actions, and installs an
 The package expects `/sys/class/backlight/intel_backlight` and is therefore
 intended for the E7440's Intel graphics and kernel backlight interface.
 
+## Clone with submodules
+
+```bash
+git clone --recurse-submodules https://github.com/curtistinkers/latitude-e7440-platform-driver.git
+```
+
 ## What It Does
 
 ### Backlight keys
